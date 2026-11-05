@@ -1,0 +1,574 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Yala Studio</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+
+/* Layout: one wide column; a left-aligned typographic hero, then an asymmetric 12-col grid of work tiles, each with a caption and its picture source */
+:root{
+  --bg:#F5F6FA; --surface:#FFFFFF; --ink:#16182B; --muted:#5D6280; --line:#DCDFEA;
+  --cobalt:#2E48F2; --sun:#FFC23D; --mint:#2FCF96; --rose:#FF6684; --tile:#E9ECF6;
+  --display:"Bricolage Grotesque", "Arial Black", system-ui, sans-serif;
+  --body:"Instrument Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F1120; --surface:#181B2E; --ink:#EEF0FA; --muted:#9CA2C2; --line:#2A2E48;
+  --cobalt:#6C80FF; --sun:#FFC94F; --mint:#3FDDA4; --rose:#FF7C95; --tile:#1D2138; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F1120; --surface:#181B2E; --ink:#EEF0FA; --muted:#9CA2C2; --line:#2A2E48;
+  --cobalt:#6C80FF; --sun:#FFC94F; --mint:#3FDDA4; --rose:#FF7C95; --tile:#1D2138; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1180px;margin:0 auto;padding-block:40px 64px;display:flex;flex-direction:column;gap:72px}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance}
+p{margin:0}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+/* nav */
+nav{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.mark{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;font-size:20px}
+.mark i{width:26px;height:26px;border-radius:50%;background:conic-gradient(var(--cobalt) 0 25%,var(--sun) 0 50%,var(--mint) 0 75%,var(--rose) 0)}
+nav ul{list-style:none;display:flex;gap:20px;margin:0;padding:0;font-size:14px;color:var(--muted)}
+nav a{color:inherit;text-decoration:none}
+nav a:hover,nav a:focus-visible{color:var(--ink);outline:none;text-decoration:underline}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.4fr 1fr;gap:40px;align-items:end}
+.hero h1{font-size:clamp(56px,11vw,150px);font-weight:800;line-height:.88;letter-spacing:-.04em}
+.hero h1 .dot{display:inline-block;width:.22em;height:.22em;border-radius:50%;background:var(--sun);margin-left:.04em;vertical-align:baseline}
+.hero .lede{font-size:clamp(18px,2vw,22px);line-height:1.4;max-width:30ch}
+.hero .lede b{color:var(--cobalt);font-weight:600}
+.pillrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.pill{font-size:13px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface)}
+.hero-side{display:flex;flex-direction:column;gap:12px}
+
+/* equal strip — four equal bars, a quiet visual thesis */
+.strip{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;height:14px}
+.strip span{border-radius:4px}
+
+/* grid */
+.work{display:grid;grid-template-columns:repeat(12,1fr);gap:28px 24px}
+.piece{display:flex;flex-direction:column;gap:14px;min-width:0}
+.span7{grid-column:span 7}.span5{grid-column:span 5}.span6{grid-column:span 6}.span12{grid-column:span 12}
+.stage{border-radius:22px;background:var(--tile);padding:32px 20px;display:flex;justify-content:center;align-items:center;gap:20px;min-height:420px;overflow:hidden;position:relative}
+.cap{display:flex;flex-direction:column;gap:6px}
+.cap .top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline}
+.cap h3{font-size:24px;font-weight:700}
+.tag{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:6px;color:#16182B}
+.tag.eq{background:var(--sun)}.tag.hr{background:var(--cobalt);color:#fff}.tag.sp{background:var(--mint)}
+.cap p{color:var(--muted);max-width:60ch}
+.src{font-family:var(--mono);font-size:12px;color:var(--muted);border-top:1px dashed var(--line);padding-top:8px}
+.src b{color:var(--ink);font-weight:500}
+.tool{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:12px;font-weight:500}
+.tool i{width:22px;height:22px;border-radius:5px;display:inline-grid;place-items:center;font-style:normal;font-size:10px;font-weight:700;font-family:var(--body)}
+.tool.ps i{background:#001E36;color:#31A8FF}
+.tool.id i{background:#49021F;color:#FF3366}
+.tools{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.tools>div{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:24px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.tools .big{width:52px;height:52px;border-radius:12px;font-size:22px}
+.tools ul{margin:0;padding-left:18px;color:var(--muted)}
+@media (max-width:640px){.tools{grid-template-columns:1fr}}
+
+/* phone frame */
+.phone{width:220px;flex:none;aspect-ratio:9/19;max-width:100%;border-radius:34px;background:#16182B;padding:9px;box-shadow:0 24px 50px -24px rgba(22,24,43,.55)}
+.screen{width:100%;height:100%;border-radius:26px;overflow:hidden;display:flex;flex-direction:column;font-size:11px;line-height:1.35;color:#16182B;background:#fff}
+.notch{height:18px;display:flex;justify-content:center;align-items:center}
+.notch i{width:54px;height:6px;border-radius:9px;background:#16182B}
+.scr{padding:10px 14px;display:flex;flex-direction:column;gap:10px;flex:1}
+.scr h4{font-family:var(--display);font-size:17px;margin:0;line-height:1.1}
+.mini{font-size:9px;letter-spacing:.06em;text-transform:uppercase;opacity:.6;font-family:var(--mono)}
+.btn{border-radius:12px;padding:9px;text-align:center;font-weight:600;font-size:11px}
+.card{border-radius:12px;padding:9px 10px;background:#F1F3FA;display:flex;flex-direction:column;gap:4px}
+.tabbar{display:flex;justify-content:space-around;padding:8px 0 12px;border-top:1px solid #E6E8F0}
+.tabbar i{width:16px;height:16px;border-radius:5px;background:#D5D9E8}
+.tabbar i.on{background:#2E48F2}
+
+/* browser frame */
+.browser{width:100%;max-width:640px;border-radius:14px;overflow:hidden;background:#fff;color:#16182B;box-shadow:0 24px 50px -24px rgba(22,24,43,.5);font-size:12px}
+.bar{display:flex;align-items:center;gap:6px;padding:9px 12px;background:#E8EAF2}
+.bar i{width:9px;height:9px;border-radius:50%;background:#C3C7D6}
+.bar span{margin-left:10px;flex:1;background:#fff;border-radius:6px;padding:3px 10px;font-family:var(--mono);font-size:10px;color:#5D6280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.site{padding:20px 22px;display:flex;flex-direction:column;gap:14px}
+.site nav{font-size:10px}
+.site h5{font-family:var(--display);font-size:clamp(20px,3.2vw,30px);line-height:1.02;margin:0;letter-spacing:-.02em}
+
+/* rights atlas */
+.articles{display:grid;grid-template-columns:repeat(6,1fr);gap:5px}
+.articles div{aspect-ratio:1;border-radius:6px;background:#EEF0F8;display:flex;align-items:flex-end;padding:4px;font-family:var(--mono);font-size:9px}
+.articles div.hl{background:#2E48F2;color:#fff}
+
+/* posters */
+.posters{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.poster{width:170px;aspect-ratio:3/4;border-radius:6px;padding:14px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 18px 36px -20px rgba(22,24,43,.5);overflow:hidden;position:relative}
+.poster b{font-family:var(--display);font-weight:800;font-size:34px;line-height:.9;letter-spacing:-.03em;position:relative}
+.poster small{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;position:relative}
+
+/* icons */
+.icons{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;width:100%;max-width:520px}
+.icons figure{margin:0;background:var(--surface);border-radius:16px;padding:18px 10px;display:flex;flex-direction:column;align-items:center;gap:8px}
+.icons svg{width:52px;height:52px}
+.icons figcaption{font-size:12px;color:var(--muted)}
+
+/* about + credits */
+.about{display:grid;grid-template-columns:1fr 1.3fr;gap:40px;border-top:1px solid var(--line);padding-top:40px}
+.about h2{font-size:clamp(30px,4vw,44px);line-height:1.02;letter-spacing:-.02em}
+.about p{color:var(--muted);max-width:60ch}
+.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500}
+td:first-child{font-variant-numeric:tabular-nums;color:var(--muted);font-family:var(--mono)}
+.contact{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;align-items:end;background:var(--ink);color:var(--bg);border-radius:22px;padding:36px 28px}
+.contact h2{font-size:clamp(28px,5vw,56px);letter-spacing:-.03em;line-height:1}
+.contact .addr{font-family:var(--mono);font-size:14px;user-select:all;padding:10px 14px;border:1px solid currentColor;border-radius:10px}
+
+@media (max-width:860px){
+  .hero,.about{grid-template-columns:1fr}
+  .span7,.span5,.span6{grid-column:span 12}
+}
+@media (max-width:480px){
+  .stage{min-height:0;padding:24px 12px}
+  .phone{width:180px}
+  .stage.duo .phone:nth-child(2){display:none}
+  .icons{grid-template-columns:repeat(2,1fr)}
+  .articles{grid-template-columns:repeat(5,1fr)}
+}
+@media (prefers-reduced-motion:no-preference){
+  .piece .stage>*{transition:transform .35s ease}
+  .piece:hover .stage>*{transform:translateY(-6px)}
+}
+
+/* ---- v4 additions: case studies, process, index, services ---- */
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+.status{display:inline-flex;align-items:center;gap:8px;font-size:13px;padding:6px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line)}
+.status i{width:8px;height:8px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 4px color-mix(in srgb,var(--mint) 25%,transparent)}
+.hero-meta{display:flex;gap:28px;flex-wrap:wrap;margin-top:28px;border-top:1px solid var(--line);padding-top:16px}
+.hero-meta div{display:flex;flex-direction:column;gap:2px}
+.hero-meta b{font-family:var(--display);font-size:28px;font-variant-numeric:tabular-nums}
+.hero-meta span{font-size:13px;color:var(--muted)}
+.sechead{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap}
+.sechead h2{font-size:clamp(32px,5vw,56px);letter-spacing:-.03em;line-height:1}
+.sechead p{color:var(--muted);max-width:44ch}
+
+.case{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:32px;align-items:start;padding-top:40px;border-top:1px solid var(--line)}
+.case.flip{grid-template-columns:minmax(0,1fr) minmax(0,1.55fr)}
+.case.flip .visual{order:2}
+.case.wide{grid-template-columns:1fr}
+.visual{display:flex;flex-direction:column;gap:12px;min-width:0}
+.info{display:flex;flex-direction:column;gap:18px;min-width:0}
+.info h3{font-size:clamp(30px,3.6vw,44px);letter-spacing:-.02em;line-height:1}
+.info .pitch{font-size:18px;line-height:1.45}
+.facts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px 16px;font-size:14px}
+.facts dt{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.facts dd{margin:0}
+.story{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.case.wide .story{grid-template-columns:repeat(4,1fr)}
+.story div{display:flex;flex-direction:column;gap:6px;padding-top:10px;border-top:2px solid var(--ink);min-width:0}
+.story h4{margin:0;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.story p{font-size:14px;color:var(--muted)}
+.info .story{grid-template-columns:repeat(2,1fr)}
+.process{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.process figure{margin:0;background:var(--tile);border-radius:16px;padding:18px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.process figcaption{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.wire{width:150px;aspect-ratio:9/19;max-width:100%;border-radius:24px;border:2px dashed var(--muted);padding:22px 14px;display:flex;flex-direction:column;gap:8px}
+.wire i{display:block;border-radius:6px;background:color-mix(in srgb,var(--muted) 28%,transparent)}
+.swatches{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.swatches span{width:40px;height:40px;border-radius:10px;border:1px solid var(--line)}
+.typespec{font-family:var(--display);font-size:42px;font-weight:800;line-height:1}
+.typespec small{display:block;font-family:var(--body);font-size:12px;font-weight:400;color:var(--muted);margin-top:6px}
+
+.more{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+.more .stage{min-height:340px}
+.more .browser{max-width:100%}
+.more .posters{flex-wrap:nowrap;gap:8px;width:100%}
+.more .posters .poster{width:auto;flex:1;min-width:0;padding:8px}
+.more .poster b{font-size:clamp(13px,1.5vw,18px)}
+.more .poster small{font-size:7px}
+.src{display:flex;flex-direction:column;gap:4px}
+.more .icons{grid-template-columns:repeat(2,1fr)}
+
+.filters{display:flex;gap:8px;flex-wrap:wrap}
+.filters button{font:inherit;font-size:13px;padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.filters button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.filters button:focus-visible,.copy:focus-visible{outline:2px solid var(--cobalt);outline-offset:2px}
+.index td a{color:inherit;text-decoration:none;font-weight:600}
+.index td a:hover{text-decoration:underline}
+.files{font-family:var(--mono);font-size:12px}
+
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+.steps div{display:flex;flex-direction:column;gap:8px;min-width:0}
+.steps b{font-family:var(--display);font-size:56px;line-height:1;color:var(--cobalt);font-variant-numeric:tabular-nums}
+.steps h3{font-size:20px}
+.steps p{font-size:14px;color:var(--muted)}
+.services{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.services div{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:8px}
+.services h3{font-size:20px}
+.services p{font-size:14px;color:var(--muted)}
+.copy{font:inherit;font-size:13px;padding:10px 14px;border-radius:10px;border:0;background:var(--sun);color:#16182B;cursor:pointer;font-weight:600}
+.contact .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--muted)}
+
+@media (max-width:900px){
+  .case,.case.flip{grid-template-columns:1fr}
+  .case.flip .visual{order:0}
+  .more{grid-template-columns:1fr}
+  .steps{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .services{grid-template-columns:1fr}
+  .case.wide .story{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:480px){
+  .story,.info .story,.case.wide .story,.facts{grid-template-columns:1fr}
+  .process{grid-template-columns:1fr}
+  .steps{grid-template-columns:1fr}
+}
+</style>
+<style>body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <nav>
+    <div class="mark"><i></i>The Yala Studio</div>
+    <ul><li><a href="#work">Work</a></li><li><a href="#index">Index</a></li><li><a href="#process">Process</a></li><li><a href="#about">About</a></li><li><a href="#contact">Contact</a></li></ul>
+  </nav>
+
+  <header class="hero">
+    <div>
+      <span class="status"><i></i>Open for new projects</span>
+      <h1 style="margin-top:22px"><span style="font-size:.38em;letter-spacing:-.01em;display:block;margin-bottom:.1em">The</span>Yala<br>Studio<span class="dot"></span></h1>
+    </div>
+    <div class="hero-side">
+      <p class="lede">I design apps, websites and print that make <b>equality</b>, <b>human rights</b> and <b>community support</b> easy to understand and easy to act on.</p>
+      <div class="strip" aria-hidden="true"><span style="background:var(--cobalt)"></span><span style="background:var(--sun)"></span><span style="background:var(--mint)"></span><span style="background:var(--rose)"></span></div>
+      <div class="hero-meta">
+        <div><b>6</b><span>projects shown</span></div>
+        <div><b>3</b><span>themes: equality, rights, support</span></div>
+        <div><b>Ps · Id</b><span>Photoshop &amp; InDesign</span></div>
+      </div>
+    </div>
+  </header>
+
+  <section id="work" style="display:flex;flex-direction:column;gap:56px">
+    <div class="sechead"><h2>Selected work</h2><p>Three case studies, each told the same way: the problem, how I approached it, the design process and the result.</p></div>
+
+    <!-- Case 1: Fair Share -->
+    <article class="case" id="fair-share">
+      <div class="visual">
+        <div class="stage duo">
+        <div class="phone"><div class="screen" style="background:#FFF8E6">
+          <div class="notch"><i></i></div>
+          <div class="scr">
+            <span class="mini">Fair Share</span>
+            <h4>Same job.<br>Same pay?</h4>
+            <div class="card" style="background:#fff">
+              <span class="mini">Your role · Nurse</span>
+              <div style="display:flex;gap:8px;align-items:flex-end;height:70px">
+                <div style="flex:1;height:100%;background:#2E48F2;border-radius:6px"></div>
+                <div style="flex:1;height:84%;background:#FFC23D;border-radius:6px"></div>
+              </div>
+              <div style="display:flex;justify-content:space-between"><span>Median</span><span>You</span></div>
+            </div>
+            <div class="card" style="background:#fff"><b style="font-size:20px;font-family:var(--display)">−16%</b><span>below the median for your role and city</span></div>
+            <div class="btn" style="background:#16182B;color:#fff">Know your rights</div>
+          </div>
+          <div class="tabbar"><i class="on"></i><i></i><i></i><i></i></div>
+        </div></div>
+        <div class="phone"><div class="screen">
+          <div class="notch"><i></i></div>
+          <div class="scr">
+            <span class="mini">Your rights</span>
+            <h4>Equal pay for equal work</h4>
+            <div class="card"><b>Ask for a pay review</b><span>A ready letter template you can send to HR.</span></div>
+            <div class="card"><b>Talk to an advisor</b><span>Free, private chat with a labour-rights volunteer.</span></div>
+            <div class="card"><b>Share anonymously</b><span>Add your salary to make the data fairer.</span></div>
+            <div class="btn" style="background:#FFC23D">Start a review</div>
+          </div>
+          <div class="tabbar"><i></i><i class="on"></i><i></i><i></i></div>
+        </div></div>
+      </div>
+        <div class="process">
+          <figure>
+            <div class="wire" aria-hidden="true"><i style="height:8px;width:40%"></i><i style="height:28px;width:80%"></i><i style="height:70px"></i><i style="height:40px"></i><i style="height:22px;margin-top:auto"></i></div>
+            <figcaption>1 · Wireframe</figcaption>
+          </figure>
+          <figure>
+            <div class="swatches" aria-hidden="true"><span style="background:#2E48F2"></span><span style="background:#FFC23D"></span><span style="background:#16182B"></span><span style="background:#FFF8E6"></span></div>
+            <div class="typespec">Aa<small>Bricolage Grotesque · Instrument Sans</small></div>
+            <figcaption>2 · Colour &amp; type</figcaption>
+          </figure>
+        </div>
+      </div>
+      <div class="info">
+        <div class="cap"><div class="top"><span class="tag eq">Equality · App</span><span class="tool ps"><i>Ps</i>Adobe Photoshop</span></div></div>
+        <h3>Fair Share</h3>
+        <p class="pitch">An app that tells you in one screen whether you are paid fairly, then gives you a clear next step.</p>
+        <dl class="facts"><div><dt>Role</dt><dd>Solo designer</dd></div><div><dt>Type</dt><dd>Self-initiated concept</dd></div><div><dt>Year</dt><dd>2026</dd></div><div><dt>Deliverables</dt><dd>2 app screens, colour &amp; type</dd></div></dl>
+        <div class="story">
+          <div><h4>Problem</h4><p>Pay gaps are hard to see. People rarely know what others in the same role earn.</p></div>
+          <div><h4>Approach</h4><p>Show one comparison only: you against the median for your role and city.</p></div>
+          <div><h4>Process</h4><p>Started with a grey wireframe, then used yellow for “you” so it stands out against cobalt.</p></div>
+          <div><h4>Result</h4><p>Three actions on the second screen: ask for a review, talk to an advisor, or share data.</p></div>
+        </div>
+        <p class="src"><span><b>Source:</b> Original concept by The Yala Studio.</span><span><b>Source file:</b> 01_FairShare_App.psd</span></p>
+      </div>
+    </article>
+
+    <!-- Case 2: Rights Atlas -->
+    <article class="case wide" id="rights-atlas">
+      <div class="visual"><div class="stage" style="background:color-mix(in srgb,var(--cobalt) 16%,var(--tile))">
+        <div class="browser">
+          <div class="bar"><i></i><i></i><i></i><span>rightsatlas.org/articles</span></div>
+          <div class="site">
+            <nav><b>Rights Atlas</b><span style="opacity:.6">Articles · Stories · Get help</span></nav>
+            <span class="mini">Universal Declaration of Human Rights · 1948</span>
+            <h5>30 rights. Plain words.<br>One for every person.</h5>
+            <div style="display:grid;grid-template-columns:1.1fr 1fr;gap:16px;align-items:start">
+              <div class="articles" aria-hidden="true">
+                <div class="hl">1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div>
+                <div>7</div><div>8</div><div>9</div><div>10</div><div>11</div><div>12</div>
+                <div>13</div><div>14</div><div>15</div><div>16</div><div>17</div><div>18</div>
+                <div>19</div><div>20</div><div>21</div><div>22</div><div>23</div><div>24</div>
+                <div>25</div><div>26</div><div>27</div><div>28</div><div>29</div><div>30</div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <span class="mini">Article 1</span>
+                <b style="font-family:var(--display);font-size:18px;line-height:1.15">Everyone is born free and equal in dignity and rights.</b>
+                <span style="color:#5D6280">Read it in 12 languages, with a short example from daily life.</span>
+                <div class="btn" style="background:#2E48F2;color:#fff;align-self:flex-start;padding:9px 16px">Read article 1</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div></div>
+      <div class="info" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:32px">
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="cap"><div class="top"><span class="tag hr">Human rights · Website</span><span class="tool ps"><i>Ps</i>Adobe Photoshop</span></div></div>
+          <h3>Rights Atlas</h3>
+          <p class="pitch">The 30 articles of the Universal Declaration of Human Rights as a grid you can tap, each one in plain words.</p>
+          <dl class="facts"><div><dt>Role</dt><dd>Solo designer</dd></div><div><dt>Type</dt><dd>Self-initiated concept</dd></div><div><dt>Year</dt><dd>2026</dd></div><div><dt>Deliverables</dt><dd>Article page design</dd></div></dl>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="story">
+            <div><h4>Problem</h4><p>The UDHR is written in legal language that many people find hard to read.</p></div>
+            <div><h4>Approach</h4><p>Give all 30 articles equal space in one grid, so no right looks more important than another.</p></div>
+            <div><h4>Process</h4><p>Tested the grid at 6 columns on desktop and 5 on phones so the numbers stay tappable.</p></div>
+            <div><h4>Result</h4><p>Each article page has one plain sentence, a daily-life example and a language switch.</p></div>
+          </div>
+          <p class="src"><span><b>Source:</b> Original concept by The Yala Studio. Article 1 paraphrases the UDHR (UN, 1948, public domain).</span><span><b>Source file:</b> 03_RightsAtlas_Website.psd</span></p>
+        </div>
+      </div>
+    </article>
+
+    <!-- Case 3: Jiran -->
+    <article class="case flip" id="jiran">
+      <div class="visual">
+        <div class="stage" style="background:color-mix(in srgb,var(--mint) 22%,var(--tile))">
+        <div class="phone"><div class="screen">
+          <div class="notch"><i></i></div>
+          <div class="scr">
+            <span class="mini">Jiran</span>
+            <h4>Neighbours who need a hand today</h4>
+            <div class="card" style="background:#E3F8EF"><b>Groceries for Um Ali</b><span>0.4 km · before 6 pm</span></div>
+            <div class="card"><b>Ride to the clinic</b><span>1.2 km · Saturday 9:00</span></div>
+            <div class="card"><b>Help reading a letter</b><span>0.8 km · in Swedish</span></div>
+            <div class="btn" style="background:#2FCF96">I can help</div>
+          </div>
+          <div class="tabbar"><i class="on" style="background:#2FCF96"></i><i></i><i></i><i></i></div>
+        </div></div>
+      </div>
+        <div class="process">
+          <figure>
+            <div class="wire" aria-hidden="true"><i style="height:8px;width:40%"></i><i style="height:28px;width:85%"></i><i style="height:34px"></i><i style="height:34px"></i><i style="height:34px"></i><i style="height:22px;margin-top:auto"></i></div>
+            <figcaption>1 · Wireframe</figcaption>
+          </figure>
+          <figure>
+            <p style="font-family:var(--display);font-size:34px;font-weight:800">Jiran</p>
+            <div class="swatches" aria-hidden="true"><span style="background:#2FCF96"></span><span style="background:#E3F8EF"></span><span style="background:#16182B"></span></div>
+            <figcaption>2 · Name &amp; colour</figcaption>
+          </figure>
+        </div>
+      </div>
+      <div class="info">
+        <div class="cap"><div class="top"><span class="tag sp">Support · App</span><span class="tool ps"><i>Ps</i>Adobe Photoshop</span></div></div>
+        <h3>Jiran</h3>
+        <p class="pitch">A neighbourhood app that matches small, local requests with people nearby who have an hour to give.</p>
+        <dl class="facts"><div><dt>Role</dt><dd>Solo designer</dd></div><div><dt>Type</dt><dd>Self-initiated concept</dd></div><div><dt>Year</dt><dd>2026</dd></div><div><dt>Deliverables</dt><dd>Request feed screen</dd></div></dl>
+        <div class="story">
+          <div><h4>Problem</h4><p>People want to help neighbours but don't know who needs what.</p></div>
+          <div><h4>Approach</h4><p>Make each request small and specific, with distance and time on every card.</p></div>
+          <div><h4>Process</h4><p>Tested card order with neighbours; distance first, then time, then the task.</p></div>
+          <div><h4>Result</h4><p>One green button, “I can help”, so saying yes takes a single tap.</p></div>
+        </div>
+        <p class="src"><span><b>Source:</b> Original concept by The Yala Studio.</span><span><b>Source file:</b> 02_Jiran_App.psd</span></p>
+      </div>
+    </article>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:28px">
+    <div class="sechead"><h2>More work</h2><p>Smaller projects in web, print and icon design.</p></div>
+    <div class="more">
+      <article class="piece"><div class="stage" style="background:color-mix(in srgb,var(--rose) 18%,var(--tile))">
+        <div class="browser" style="max-width:440px">
+          <div class="bar"><i></i><i></i><i></i><span>opentable-community.org</span></div>
+          <div class="site" style="background:#FFF1F4">
+            <nav><b>Open Table</b><span style="opacity:.6">Give · Volunteer</span></nav>
+            <h5>No one eats alone this winter.</h5>
+            <div class="card" style="background:#fff">
+              <div style="display:flex;justify-content:space-between"><b>1,240 meals</b><span style="color:#5D6280">goal 2,000</span></div>
+              <div style="height:10px;border-radius:9px;background:#F3D3DB"><div style="width:62%;height:100%;border-radius:9px;background:#FF6684"></div></div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
+              <div class="btn" style="background:#fff;border:1px solid #F3C3CF">1 meal</div>
+              <div class="btn" style="background:#FF6684;color:#fff">5 meals</div>
+              <div class="btn" style="background:#fff;border:1px solid #F3C3CF">20 meals</div>
+            </div>
+          </div>
+        </div>
+      </div>
+        <div class="cap"><div class="top"><h3>Open Table</h3><span class="tag sp">Support · Web</span></div>
+        <p>A food-bank campaign page that counts meals, not money.</p>
+        <p class="src" style="display:flex;flex-direction:column;gap:6px"><span class="tool ps"><i>Ps</i>Adobe Photoshop</span><span><b>Source file:</b> 04_OpenTable_Website.psd</span></p></div>
+      </article>
+      <article class="piece"><div class="stage">
+        <div class="posters">
+          <div class="poster" style="background:#2E48F2;color:#fff">
+            <div aria-hidden="true" style="position:absolute;right:-30px;bottom:-30px;width:130px;height:130px;border-radius:50%;background:#FFC23D"></div>
+            <small>Equal · 01</small><b>Equal<br>is not<br>a favour.</b>
+          </div>
+          <div class="poster" style="background:#FFC23D;color:#16182B">
+            <div aria-hidden="true" style="position:absolute;left:14px;right:14px;top:46%;height:8px;background:#16182B"></div>
+            <small>Equal · 02</small><b>Same<br>line.<br>Same start.</b>
+          </div>
+          <div class="poster" style="background:#16182B;color:#fff">
+            <div aria-hidden="true" style="position:absolute;inset:auto 0 0 0;height:40%;background:repeating-linear-gradient(90deg,#2FCF96 0 20%,#FF6684 20% 40%,#FFC23D 40% 60%,#2E48F2 60% 80%,#fff 80% 100%)"></div>
+            <small>Equal · 03</small><b>Many<br>colours.<br>One right.</b>
+          </div>
+        </div>
+      </div>
+        <div class="cap"><div class="top"><h3>Equal posters</h3><span class="tag eq">Equality · Print</span></div>
+        <p>Three A3 posters. Each uses one shape to carry the message.</p>
+        <p class="src" style="display:flex;flex-direction:column;gap:6px"><span class="tool id"><i>Id</i>Adobe InDesign</span><span><b>Source file:</b> 05_Equal_Posters.idml</span></p></div>
+      </article>
+      <article class="piece"><div class="stage" style="min-height:0;padding-block:40px">
+        <div class="icons">
+          <figure>
+            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--cobalt)"><path d="M32 10v44M14 54h36"/><path d="M12 20h40"/><path d="M18 20l-8 16h16zM46 20l-8 16h16z" fill="var(--sun)"/></svg>
+            <figcaption>Equality</figcaption>
+          </figure>
+          <figure>
+            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--cobalt)"><path d="M10 38c6-2 10 0 14 4l8 8 8-8c4-4 8-6 14-4" /><path d="M24 42l-6 6M40 42l6 6"/><circle cx="32" cy="22" r="9" fill="var(--mint)"/></svg>
+            <figcaption>Support</figcaption>
+          </figure>
+          <figure>
+            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--cobalt)"><path d="M32 8l20 8v14c0 13-9 22-20 26-11-4-20-13-20-26V16z" fill="var(--rose)" fill-opacity=".35"/><path d="M24 32l6 6 11-12"/></svg>
+            <figcaption>Rights</figcaption>
+          </figure>
+          <figure>
+            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--cobalt)"><rect x="14" y="8" width="36" height="48" rx="3"/><path d="M14 8l20 6v42l-20-0z" fill="var(--sun)"/><circle cx="29" cy="34" r="1.5" fill="currentColor"/></svg>
+            <figcaption>Open door</figcaption>
+          </figure>
+        </div>
+      </div>
+        <div class="cap"><div class="top"><h3>Common Ground</h3><span class="tag hr">Rights · Icons</span></div>
+        <p>Four icons on one 64 px grid with one stroke weight.</p>
+        <p class="src" style="display:flex;flex-direction:column;gap:6px"><span class="tool ps"><i>Ps</i>Adobe Photoshop</span><span><b>Source file:</b> 06_CommonGround_Icons.psd</span></p></div>
+      </article>
+    </div>
+  </section>
+
+  <section id="index" style="display:flex;flex-direction:column;gap:20px">
+    <div class="sechead"><h2>Index</h2><p>Every project with equal weight, plus the picture source and source file for each.</p></div>
+    <div class="filters" role="group" aria-label="Filter projects">
+      <button type="button" id="f-all" data-f="all" aria-pressed="true">All</button>
+      <button type="button" id="f-app" data-f="app" aria-pressed="false">App</button>
+      <button type="button" id="f-web" data-f="web" aria-pressed="false">Website</button>
+      <button type="button" id="f-print" data-f="print" aria-pressed="false">Print</button>
+      <button type="button" id="f-icons" data-f="icons" aria-pressed="false">Icons</button>
+    </div>
+    <div class="tablewrap">
+      <table class="index">
+        <thead><tr><th>#</th><th>Project</th><th>Discipline</th><th>Theme</th><th>Made in</th><th>Source file</th><th>Picture source</th></tr></thead>
+        <tbody>
+          <tr data-d="app"><td>01</td><td><a href="#fair-share">Fair Share</a></td><td>App</td><td>Equality</td><td>Photoshop</td><td class="files">01_FairShare_App.psd</td><td>Original concept, The Yala Studio</td></tr>
+          <tr data-d="app"><td>02</td><td><a href="#jiran">Jiran</a></td><td>App</td><td>Support</td><td>Photoshop</td><td class="files">02_Jiran_App.psd</td><td>Original concept, The Yala Studio</td></tr>
+          <tr data-d="web"><td>03</td><td><a href="#rights-atlas">Rights Atlas</a></td><td>Website</td><td>Human rights</td><td>Photoshop</td><td class="files">03_RightsAtlas_Website.psd</td><td>Original concept; Article 1 from the UDHR (UN, 1948, public domain)</td></tr>
+          <tr data-d="web"><td>04</td><td>Open Table</td><td>Website</td><td>Support</td><td>Photoshop</td><td class="files">04_OpenTable_Website.psd</td><td>Original concept, The Yala Studio</td></tr>
+          <tr data-d="print"><td>05</td><td>Equal posters</td><td>Print</td><td>Equality</td><td>InDesign</td><td class="files">05_Equal_Posters.idml</td><td>Original posters, The Yala Studio</td></tr>
+          <tr data-d="icons"><td>06</td><td>Common Ground</td><td>Icons</td><td>Human rights</td><td>Photoshop</td><td class="files">06_CommonGround_Icons.psd</td><td>Original icons, The Yala Studio</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="process" style="display:flex;flex-direction:column;gap:28px">
+    <div class="sechead"><h2>How I work</h2><p>The same four steps on every project, big or small.</p></div>
+    <div class="steps">
+      <div><b>1</b><h3>Listen</h3><p>Talk to the people the design is for, and to the team who will run it.</p></div>
+      <div><b>2</b><h3>Sketch</h3><p>Grey wireframes first, so we agree on structure before colour.</p></div>
+      <div><b>3</b><h3>Test</h3><p>Show screens to real users early. Fix what confuses them.</p></div>
+      <div><b>4</b><h3>Deliver</h3><p>Clean, layered Photoshop and InDesign files your team can edit.</p></div>
+    </div>
+  </section>
+
+  <section class="about" id="about">
+    <div>
+      <p class="eyebrow">About</p>
+      <h2>Simple design for serious causes.</h2>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <p>The Yala Studio is a graphic design studio led by Yala. I work with NGOs, community groups and social start-ups on apps, websites and campaigns. My rule is simple: if a person in a hurry can't understand the screen in five seconds, it isn't finished.</p>
+      <p>I test with real users early, and build accessible colour and type systems that work for everyone.</p>
+    </div>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:20px">
+    <p class="eyebrow">Services</p>
+    <div class="services">
+      <div><span class="tool ps"><i>Ps</i></span><h3>App &amp; web design</h3><p>Screens, mockups and clickable flows for apps and websites.</p></div>
+      <div><span class="tool id"><i>Id</i></span><h3>Print &amp; campaigns</h3><p>Posters, reports, brochures and annual reviews.</p></div>
+      <div><span class="tool ps"><i>Ps</i></span><h3>Icons &amp; visual systems</h3><p>Icon sets, colour and type guides that keep every channel consistent.</p></div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <p class="eyebrow" style="color:inherit;opacity:.7">Contact</p>
+      <h2>Let's design something fair.</h2>
+    </div>
+    <div class="row">
+      <span class="addr" id="email">hello@yalastudio.design</span>
+      <button type="button" class="copy" id="copy-email">Copy email</button>
+    </div>
+  </section>
+
+  <footer><span>© 2026 The Yala Studio</span><span>All work shown is original and self-initiated.</span></footer>
+</div>
+
+<script>
+(function(){
+  var btns=document.querySelectorAll('.filters button'), rows=document.querySelectorAll('.index tbody tr');
+  btns.forEach(function(b){b.addEventListener('click',function(){
+    btns.forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});
+    var f=b.dataset.f; rows.forEach(function(r){r.hidden=!(f==='all'||r.dataset.d===f)});
+  })});
+  var c=document.getElementById('copy-email'), e=document.getElementById('email');
+  c.addEventListener('click',function(){
+    var done=function(){c.textContent='Copied';setTimeout(function(){c.textContent='Copy email'},1600)};
+    var fallback=function(){var r=document.createRange();r.selectNodeContents(e);var s=getSelection();s.removeAllRanges();s.addRange(r);c.textContent='Press Ctrl+C'};
+    try{navigator.clipboard.writeText(e.textContent).then(done,fallback)}catch(err){fallback()}
+  });
+})();
+</script>
+
+</body>
+</html>
